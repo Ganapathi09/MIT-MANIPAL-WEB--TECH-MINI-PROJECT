@@ -1,0 +1,88 @@
+<?php
+// insert_data.php
+
+$host = 'localhost';
+$db = 'ecommerce';
+$user = 'root';
+$pass = '';
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Insert categories
+    $pdo->exec("INSERT INTO Categories (category_name) VALUES 
+                ('Electronics'), 
+                ('Clothing'), 
+                ('Books'), 
+                ('Home Appliances'), 
+                ('Furniture'), 
+                ('Toys')");
+
+    // Insert products for each category
+    $pdo->exec("INSERT INTO Products (product_name, price, stock_quantity, category_id) VALUES
+                -- Electronics
+                ('Laptop', 1200.00, 15, (SELECT category_id FROM Categories WHERE category_name = 'Electronics')),
+                ('Headphones', 80.00, 40, (SELECT category_id FROM Categories WHERE category_name = 'Electronics')),
+                ('Smartwatch', 150.00, 25, (SELECT category_id FROM Categories WHERE category_name = 'Electronics')),
+                ('Camera', 300.00, 10, (SELECT category_id FROM Categories WHERE category_name = 'Electronics')),
+                ('Speaker', 70.00, 50, (SELECT category_id FROM Categories WHERE category_name = 'Electronics')),
+                
+                -- Books
+                ('Fiction Novel', 20.00, 100, (SELECT category_id FROM Categories WHERE category_name = 'Books')),
+                ('Science Textbook', 50.00, 30, (SELECT category_id FROM Categories WHERE category_name = 'Books')),
+                ('Biography', 25.00, 60, (SELECT category_id FROM Categories WHERE category_name = 'Books')),
+                ('Historical Novel', 18.00, 80, (SELECT category_id FROM Categories WHERE category_name = 'Books')),
+                ('Self-Help Guide', 15.00, 90, (SELECT category_id FROM Categories WHERE category_name = 'Books')),
+                
+                -- Home Appliances
+                ('Vacuum Cleaner', 200.00, 20, (SELECT category_id FROM Categories WHERE category_name = 'Home Appliances')),
+                ('Microwave Oven', 150.00, 15, (SELECT category_id FROM Categories WHERE category_name = 'Home Appliances')),
+                ('Refrigerator', 1000.00, 5, (SELECT category_id FROM Categories WHERE category_name = 'Home Appliances')),
+                ('Air Conditioner', 750.00, 8, (SELECT category_id FROM Categories WHERE category_name = 'Home Appliances')),
+                ('Washing Machine', 400.00, 10, (SELECT category_id FROM Categories WHERE category_name = 'Home Appliances')),
+                
+                -- Furniture
+                ('Sofa', 300.00, 12, (SELECT category_id FROM Categories WHERE category_name = 'Furniture')),
+                ('Dining Table', 450.00, 8, (SELECT category_id FROM Categories WHERE category_name = 'Furniture')),
+                ('Office Chair', 80.00, 30, (SELECT category_id FROM Categories WHERE category_name = 'Furniture')),
+                ('Bed Frame', 500.00, 7, (SELECT category_id FROM Categories WHERE category_name = 'Furniture')),
+                ('Bookshelf', 120.00, 25, (SELECT category_id FROM Categories WHERE category_name = 'Furniture')),
+                
+                -- Toys
+                ('Toy Car', 15.00, 100, (SELECT category_id FROM Categories WHERE category_name = 'Toys')),
+                ('Action Figure', 20.00, 80, (SELECT category_id FROM Categories WHERE category_name = 'Toys')),
+                ('Board Game', 30.00, 40, (SELECT category_id FROM Categories WHERE category_name = 'Toys')),
+                ('Doll', 18.00, 60, (SELECT category_id FROM Categories WHERE category_name = 'Toys')),
+                ('Puzzle Set', 10.00, 150, (SELECT category_id FROM Categories WHERE category_name = 'Toys'))");
+
+    echo "Sample data inserted successfully!";
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
+?>
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Create Categories table
+CREATE TABLE IF NOT EXISTS Categories (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(255) UNIQUE NOT NULL
+);
+
+-- Create Products table
+CREATE TABLE IF NOT EXISTS Products (
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_name VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    stock_quantity INT NOT NULL,
+    category_id INT,
+    FOREIGN KEY (category_id) REFERENCES Categories(category_id) ON DELETE CASCADE
+);
+
+-- Create Orders table
+CREATE TABLE IF NOT EXISTS Orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT,
+    order_quantity INT NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES Products(product_id) ON DELETE CASCADE
+);

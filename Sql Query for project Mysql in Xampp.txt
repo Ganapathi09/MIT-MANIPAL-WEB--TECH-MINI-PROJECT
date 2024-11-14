@@ -1,0 +1,92 @@
+-- Create the e-commerce database
+CREATE DATABASE ecommerce;
+
+-- Use the database
+USE ecommerce;
+
+-- Create the 'Categories' table with a unique constraint on category_name
+CREATE TABLE Categories (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- Create the 'Products' table with a foreign key reference to Categories
+CREATE TABLE Products (
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_name VARCHAR(100) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    stock_quantity INT NOT NULL,
+    category_id INT,
+    FOREIGN KEY (category_id) REFERENCES Categories(category_id) ON DELETE SET NULL
+);
+
+-- Create the 'Orders' table with a foreign key reference to Products
+CREATE TABLE Orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    order_quantity INT NOT NULL,
+    order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+
+-- Create the 'Order_Logs' table to log each new order
+CREATE TABLE Order_Logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    order_quantity INT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id)
+
+);
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+3. Implementing a Trigger on Orders Table
+DELIMITER //
+
+CREATE TRIGGER log_new_order
+AFTER INSERT ON Orders
+FOR EACH ROW
+BEGIN
+    INSERT INTO Order_Logs (order_id, order_quantity) VALUES (NEW.order_id, NEW.order_quantity);
+END //
+
+DELIMITER ;
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+4. Stored Procedure to Get Product Details and Order Count
+
+DELIMITER //
+
+CREATE PROCEDURE GetProductInfo(IN p_product_id INT)
+BEGIN
+    SELECT 
+        p.product_name, 
+        c.category_name,
+        (SELECT COUNT(*) FROM Orders o WHERE o.product_id = p.product_id) AS total_orders
+    FROM 
+        Products p
+    LEFT JOIN 
+        Categories c ON p.category_id = c.category_id
+    WHERE 
+        p.product_id = p_product_id;
+END //
+
+DELIMITER ;
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+<?php
+// Database credentials
+$host = 'localhost';
+$db = 'ecommerce';
+$user = 'root';
+$pass = '';
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+5. Access the Project in Your Browser
+open Xampp php and start Apache severand My sql server and then 
+Open a browser and type the following URL:
+
+http://localhost/ecommerce_project/index.php
+This will run the index.php file. You can replace index.php with any other file you want to test, such as insert_data.php or place_order.php.
