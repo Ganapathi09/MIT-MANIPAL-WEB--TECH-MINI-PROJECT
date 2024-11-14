@@ -1,0 +1,68 @@
+/* products.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.products {
+    display: flex;
+    flex-direction: column;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+thead {
+    background-color: #007BFF; /* Header background color */
+    color: white; /* Header text color */
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd; /* Border for table cells */
+    color: #333; /* Text color for cells */
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light grey for even rows */
+}
+
+tr:nth-child(odd) {
+    background-color: #ffffff; /* White for odd rows */
+}
+
+.order-button {
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.order-button:hover {
+    background-color: #218838;
+}
